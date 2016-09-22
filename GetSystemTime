@@ -1,0 +1,11 @@
+				//获取系统的UTC时间。  
+				SYSTEMTIME stUTC;
+				GetSystemTime(&stUTC);
+				//显示时间的间隔。  
+				const int nBufSize = 256;
+				char chBuf[nBufSize];
+				sprintf(chBuf, "%04d-%02d-%02d-%02d-%02d-%02d-%04d-%01d\r\n",
+					stUTC.wYear, stUTC.wMonth, stUTC.wDay,
+					stUTC.wHour, stUTC.wMinute, stUTC.wSecond,
+					stUTC.wMilliseconds, stUTC.wDayOfWeek);
+				printf(chBuf);
