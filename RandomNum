@@ -1,0 +1,18 @@
+#include<iostream.h>
+#include<time.h>
+#include<stdlib.h>
+#define RANDOM(minv, maxv) (rand()%(maxv-minv))+ minv
+
+void GetRandomNPoint(int minv, int maxv, int *randomv)
+{
+	int length = maxv - minv;
+  assert(length < RAND_MAX);
+	SYSTEMTIME st;
+	GetSystemTime(&st);
+	GetLocalTime(&st);
+	srand(st.wSecond * 1000 + st.wMilliseconds);
+	//srand(clock());
+	//srand( (unsigned)time( NULL));
+	int index = RANDOM(minv, maxv);
+	*randomv = index;
+}
