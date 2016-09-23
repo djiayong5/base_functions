@@ -1,0 +1,28 @@
+	//获取系统的UTC时间。  
+	SYSTEMTIME stUTC;
+	GetSystemTime(&stUTC);
+	//显示时间的间隔。  
+	const int nBufSize = 256;
+	char chBuf[nBufSize];
+	sprintf(chBuf, "%04d-%02d-%02d-%02d-%02d-%02d-%04d-%01d",
+		stUTC.wYear, stUTC.wMonth, stUTC.wDay,
+		stUTC.wHour, stUTC.wMinute, stUTC.wSecond,
+		stUTC.wMilliseconds, stUTC.wDayOfWeek);
+	printf(chBuf);
+
+
+
+
+std::string FileNameGeneration(const std::string capture_path)
+{
+	//std::string capture_path = "D:\\lane_seperate\\";
+	SYSTEMTIME st;
+	char buf[1024];
+	std::string filename;
+	GetSystemTime(&st);
+	GetLocalTime(&st);
+	sprintf_s(buf, sizeof(buf), "%d%02d%02d-%02d%02d%02d-%02d.png",
+		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds / 10);
+	filename = std::string(capture_path) + buf;
+	return filename;
+}
