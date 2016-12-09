@@ -12,8 +12,29 @@ linux下：
  
 3、一般时间：
  time_t t0（time_t *t）; //如果t是空指针，直接返回当前时间毫秒。如果t不是空指针，返回当前时间的同时，将返回值赋予t指向的内存空间。 
-    
-4、写出类
+
+4、 ftime()
+   相关函数：time, ctime, gettimeofday
+　　表头文件：#include <sys/timeb.h>
+　　函数定义：int ftime(struct timeb *tp);
+    struct timeb{
+　　time_t time; /* 为1970-01-01至今的秒数*/
+　　unsigned short millitm; /* 千分之一秒即毫秒 */
+　　short timezonel; /* 为目前时区和Greenwich相差的时间，单位为分钟 */
+　　short dstflag; /* 为日光节约时间的修正状态，如果为非0代表启用日光节约时间修正 */
+　　};
+　　返回值 ：无论成功或失败都返回0
+　　范例：
+　　#include <sys/timeb.h>
+　　main()
+　　{
+　　struct timeb tp;
+　　ftime(&tp);
+　　printf("%d\n", tp.time);
+　　}
+
+
+5、写出类
 //-----mytimecpu.h-----//
 class TimerCPU
 {
@@ -63,4 +84,23 @@ windows下：
 	start = GetTickCount();
   //.......算法部分.......//
   end = GetTickCount();
-	cout << "gpu缩放所耗费的时间：" << end - start << "\n";
+	cout << "gpu缩放所耗费的时间：" << end - start << "\n"
+	
+ 4、 获取年月日：
+  #include "time.h"
+  struct tm *ptr;
+  time_t t;
+  t=time(NULL);
+  ptr=localtime(&t);
+  printf(asctime(ptr));//年月日
+  printf(“%d ms\n”， ptr->tm_sec);//毫秒
+
+6、 总结
+asctime() 	将时间日期以字符串格式表示
+ctime() 	将时间日期以字符串格式表示
+gettimeofday() 	获取当前时间
+gmtime() 	获取当前时间和日期
+localtime() 	获取当前时间和日期并转换为本地时间
+mktime() 	将时间转换成经过的秒数
+settimeofday() 	设置当前时间戳
+time() 	获取当前时间(以秒数表示)
