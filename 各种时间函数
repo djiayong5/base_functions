@@ -1,40 +1,43 @@
 linux下：
-1、精确时间：
+1、gettimeofday（）返回毫秒和年月日：
     struct timeval cur_t; //获取秒
     struct tm* cur_tm; //获取年月日星期
     gettimeofday(&cur_t,NULL);
     cur_tm=localtime(&cur_t.tv_sec);
     printf("Current time is: %sMicro seconds is: %d.\n",asctime(cur_tm),cur_t.tv_usec);
    
-2、一般时间：
- time_t t0;
+2、clock()返回滴答数,最精确为毫秒单位,在标准C/C++中，最小的计时单位是1毫秒：返回从“开启这个程序进程”到“程序中调用clock()函数”时之间的CPU时钟计时单元（clock tick）数
+ clock_t t0;
  t0 = clock(); //获取毫秒
  
-3、一般时间：
+3、time()返回秒： 返回自 Unix 纪元（January 1 1970 00:00:00 GMT）起的当前时间的秒数的函数
  time_t t0（time_t *t）; //如果t是空指针，直接返回当前时间毫秒。如果t不是空指针，返回当前时间的同时，将返回值赋予t指向的内存空间。 
 
-4、 ftime()
-   相关函数：time, ctime, gettimeofday
-　　表头文件：#include <sys/timeb.h>
-　　函数定义：int ftime(struct timeb *tp);
-    struct timeb{
-　　time_t time; /* 为1970-01-01至今的秒数*/
-　　unsigned short millitm; /* 千分之一秒即毫秒 */
-　　short timezonel; /* 为目前时区和Greenwich相差的时间，单位为分钟 */
-　　short dstflag; /* 为日光节约时间的修正状态，如果为非0代表启用日光节约时间修正 */
-　　};
-　　返回值 ：无论成功或失败都返回0
-　　范例：
-　　#include <sys/timeb.h>
-　　main()
-　　{
-　　struct timeb tp;
-　　ftime(&tp);
-　　printf("%d\n", tp.time);
-　　}
+4、获取微毫秒数gettimeofday（）
+#include <sys/time.h>
+struct timeval start, end;
+gettimeofday( &start, NULL );
+sleep(3);
+gettimeofday( &end, NULL );
+int timeuse = 1000000 * ( end.tv_sec - start.tv_sec ) + end.tv_usec - start.tv_usec;
+printf("time: %d us\n", timeuse);
 
+5、 获取毫秒数ftime()
+#include <sys/timeb.h>
+long long getSystemTime() {
+    struct timeb t;
+    ftime(&t);
+    return 1000 * t.time + t.millitm;
+} 
+int main() {
+    long long start=getSystemTime();
+    sleep(3);
+    long long end=getSystemTime();
+    printf("time: %lld ms\n", end-start);
+    return 0;
+}
 
-5、写出类
+6、获取毫秒数,写出类
 //-----mytimecpu.h-----//
 class TimerCPU
 {
@@ -71,29 +74,26 @@ public:
     
     
 windows下：
-1、一般时间：
- time_t t0;
- t0 = clock(); //获取毫秒
+1、clock()：同上linux
  
-2、一般时间：
- time_t t0（time_t *t）; //如果t是空指针，直接返回当前时间毫秒。如果t不是空指针，返回当前时间的同时，将返回值赋予t指向的内存空间。
- 
-3、 GetTickCount
-	double start = 0.0;
-	double end = 0.0;
-	start = GetTickCount();
-  //.......算法部分.......//
-  end = GetTickCount();
-	cout << "gpu缩放所耗费的时间：" << end - start << "\n"
+2、time()：同上linux
+
+3、 GetTickCount():返回（retrieve）从操作系统启动所经过（elapsed）的毫秒数
+double start = 0.0;
+double end = 0.0;
+start = GetTickCount();
+//.......算法部分.......//
+end = GetTickCount();
+cout << "gpu缩放所耗费的时间：" << end - start << "\n"
 	
- 4、 获取年月日：
+4、 获取年月日：
   #include "time.h"
   struct tm *ptr;
   time_t t;
   t=time(NULL);
   ptr=localtime(&t);
   printf(asctime(ptr));//年月日
-  printf(“%d ms\n”， ptr->tm_sec);//毫秒
+  printf(“%d ms\n”， ptr->tm_sec);//秒
 
 6、 总结
 asctime() 	将时间日期以字符串格式表示
