@@ -1,0 +1,66 @@
+linux下：
+1、精确时间：
+    struct timeval cur_t; //获取秒
+    struct tm* cur_tm; //获取年月日星期
+    gettimeofday(&cur_t,NULL);
+    cur_tm=localtime(&cur_t.tv_sec);
+    printf("Current time is: %sMicro seconds is: %d.\n",asctime(cur_tm),cur_t.tv_usec);
+   
+2、一般时间：
+ time_t t0;
+ t0 = clock(); //获取毫秒
+ 
+3、一般时间：
+ time_t t0（time_t *t）; //如果t是空指针，直接返回当前时间毫秒。如果t不是空指针，返回当前时间的同时，将返回值赋予t指向的内存空间。 
+    
+4、写出类
+//-----mytimecpu.h-----//
+class TimerCPU
+{
+  static const int bits = 10;
+public:
+  long long beg_clock;
+  float freq;
+  TimerCPU(float freq_) : freq(freq_) {   // freq = clock frequency in MHz
+    beg_clock = getTSC(bits);
+  }
+  long long getTSC(int bits) {
+#ifdef WIN32
+    return __rdtsc()/(1LL<<bits);
+#else
+    unsigned int low, high;
+    __asm__(".byte 0x0f, 0x31" :"=a" (low), "=d" (high));
+    return ((long long)high<<(32-bits)) | ((long long)low>>bits);
+#endif
+  }
+  float read() {
+    long long end_clock = getTSC(bits);
+    long long Kcycles = end_clock - beg_clock;
+    float time = (float)(1<<bits)*Kcycles/freq/1e3f;
+    return time;
+  }
+};
+  
+//-----main.cpp-----//
+ TimerGPU timer0(0);  
+ //.......算法部分.......//
+ double totTime0 = timer0.read();
+ printf("phash on GPU time 1000 frame : %.2f ms\n", totTime0);
+    
+    
+    
+windows下：
+1、一般时间：
+ time_t t0;
+ t0 = clock(); //获取毫秒
+ 
+2、一般时间：
+ time_t t0（time_t *t）; //如果t是空指针，直接返回当前时间毫秒。如果t不是空指针，返回当前时间的同时，将返回值赋予t指向的内存空间。
+ 
+3、 GetTickCount
+	double start = 0.0;
+	double end = 0.0;
+	start = GetTickCount();
+  //.......算法部分.......//
+  end = GetTickCount();
+	cout << "gpu缩放所耗费的时间：" << end - start << "\n";
