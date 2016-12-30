@@ -134,7 +134,17 @@ ios::end 	从流末尾处开始计算的位移
 在二进制文件中，使用<< 和>>，以及函数（如getline）来操作符输入和输出数据，没有什么实际意义，虽然它们是符合语法的。
 文件流包括两个为顺序读写数据特殊设计的成员函数：write 和 read。第一个函数 (write) 是ostream 的一个成员函数，都是被ofstream所继承。而read 是istream 的一个成员函数，被ifstream 所继承。类 fstream 的对象同时拥有这两个函数。它们的原型是：
 write ( char * buffer, streamsize size );
+fout.write((char*) buffer, num * dim * sizeof(float));//例子：将num * dim个float型数组buffer写入文件
+fin << num << std::endl; //例子: 写单个变量和换行符
+fin << dim << std::endl; //例子: 写单个变量和换行符
+fin.ignore();//会跳过当前1个字符
+    
 read ( char * buffer, streamsize size );
+in.read(reinterpret_cast<char *>(&dimension), sizeof(int)); //例子：读取单个int型变量
+in.read (buffer, size);  //例子：读取整个文件
+fin >> num;  //例子: 读单个变量
+fin >> dim;  //例子: 读单个变量
+fin.ignore();
 这里 buffer 是一块内存的地址，用来存储或读出数据。参数size 是一个整数值，表示要从缓存（buffer）中读出或写入的字符数。
 
     // 读二进制文件 
@@ -147,10 +157,10 @@ read ( char * buffer, streamsize size );
             char * buffer;  
             long size;  
             ifstream in (filename, ios::in|ios::binary|ios::ate);  //输入流、二进制、文件内容末尾
-            size = in.tellg();  //获取文件byte大小
+            size = in.tellg() / sizeof(char);  //获取文件byte大小
             in.seekg (0, ios::beg);  //文件指针移到开头
             buffer = new char [size];  //开辟数组内存
-            in.read (buffer, size);  //读文件
+            in.read (buffer, size);  //读取整个文件
             in.close();  //关闭文件
               
             cout << "the complete file is in a buffer";  
