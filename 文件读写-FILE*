@@ -1,0 +1,135 @@
+
+	//打开文件	
+  FILE *fp1;
+  
+  //判断打开是否成功
+  if((fp1=fopen("in.txt", "r")==NULL)
+  {
+    printf("\nerror on open c:\\hzk16 file!");
+    exit(-1);
+  }
+  
+  //读
+  while (！feof(fp))
+	{
+		int a, b;
+		fscanf(fp1, "%d %d", &a, &b);
+		printf("%d, %d \n", a, b);
+	}
+  fclose(fp1);
+  
+  
+  打开方式主要有以下若干类：
+r：只读打开一个文本文件，只允许读数据
+w：只写打开或建立一个文本文件，只允许写数据
+a：追加打开一个文本文件，并在文件末尾写数据
+t：以文本的方式打开文件
+b：以二进制的方式打开文件
++：可读可写
+  另外
+rt+：读写打开一个文本文件，允许读和写
+wt+：读写打开或建立一个文本文件，允许读写
+at+：读写打开一个文本文件，允许读，或在文件末追加数据
+rb+：读写打开一个二进制文件，允许读和写
+wb+：读写打开或建立一个二进制文件，允许读和写
+ab+：读写打开一个二进制文件，允许读，或在文件末追加数据
+
+1
+fgetc：读字符（很少用）
+字符变量=fgetc(文件指针)
+char ch = fgetc(fp);
+
+2
+fputc：向文件写字符（很少用）
+fputc(字符量，文件指针)
+char ch = 'a';
+fputc(ch,fp);
+
+3
+fgets：读取字符串
+fgets(字符数组名，n，文件指针)
+FILE *fp;
+char str[11];
+fgets(str,11,fp);
+
+4
+fputs：向文件写一个字符串
+fputs(字符串，文件指针) 
+fputs(“abcd“，fp)；
+
+5
+fscanf/fprintf：格式化读写函数
+fprintf函数与前面使用的scanf和printf 函数的功能相似，都是格式化读写函数。 
+两者的区别在于 fscanf 函数和fprintf函数的读写对象不是键盘和显示器，而是磁盘文件。
+fscanf和fprintf函数每次只能读写一个结构数组元素，因此采用了循环语句来读写全部数组元素。
+这两个函数的调用格式为： 
+fscanf(文件指针，格式字符串，输入表列)
+fprintf(文件指针，格式字符串，输出表列)
+fscanf(fp,"%d%s",&i,s);
+fprintf(fp,"%d%c",j,ch);
+
+6
+rewind(fp);
+函数把文件内部位置指针移到文件首。 
+
+7
+fread/fwrite：文件块读写（二进制读写利器）
+C语言还提供了用于整块数据的读写函数。 
+可用来读写一组数据，如一个数组元素，一个结构变量的值等。
+读数据块函数调用的一般形式为： 
+fread(buffer,size,count,fp); 
+写数据块函数调用的一般形式为： 
+fwrite(buffer,size,count,fp); 
+其中buffer是一个指针，在fread函数中，它表示存放输入数据的首地址。
+在fwrite函数中，它表示存放输出数据的首地址。 
+size 表示数据块的字节数。
+count 表示要读写的数据块块数。
+fp 表示文件指针。
+例如：
+fread(data,4,5,fp); 其意义是从fp所指的文件中，
+每次读4个字节(一个实数)送入实数组data中，连续读5次，即读5个实数到data中。
+#include<stdio.h>
+struct stu
+{
+char name[10];
+int num;
+int age;
+char addr[15];
+}boya[2],boyb[2],*pp,*qq;
+main()
+{
+FILE *fp;
+char ch;
+int i;
+pp=boya;
+qq=boyb;
+if((fp=fopen("stu_list","wb+"))==NULL)
+{
+printf("Cannot open file strike any key exit!");
+getch();
+exit(1);
+}
+printf("\ninput data\n");
+for(i=0;i<2;i++,pp++)
+scanf("%s%d%d%s",pp->name,&pp->num,&pp->age,pp->addr);
+pp=boya;
+fwrite(pp,sizeof(struct stu),2,fp);
+rewind(fp);
+fread(qq,sizeof(struct stu),2,fp);
+printf("\n\nname\tnumber age addr\n");
+for(i=0;i<2;i++,qq++)
+printf("%s\t%5d%7d%s\n",qq->name,qq->num,qq->age,qq->addr);
+fclose(fp);
+}
+
+/*本例程序定义了一个结构stu,说明了两个结构数组boya和 boyb以及两个结构指针变量pp和qq。
+pp指向boya,qq指向boyb。程序第16行以读写方式打开二进制文件“stu_list”，
+输入二个学生数据之后，写入该文件中， 然后把文件内部位置指针移到文件首，
+读出两块学生数据后，在屏幕上显示。*/
+
+
+
+
+
+
+
