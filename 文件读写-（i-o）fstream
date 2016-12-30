@@ -1,0 +1,165 @@
+#include <fstream>  
+ofstream         //文件写操作 内存写入存储设备   
+ifstream         //文件读操作，存储设备读区到内存中  
+fstream          //读写操作，对打开的文件可进行读写操作
+
+打开文件的方式在iOS类(所以流式I/O的基类)中定义，有如下几种方式：
+
+ios::in 	为输入(读)而打开文件
+ios::out 	为输出(写)而打开文件
+ios::ate 	初始位置：文件尾
+ios::app 	所有输出附加在文件末尾
+ios::trunc 	如果文件已存在则先删除该文件
+ios::binary 	二进制方式
+这些方式是能够进行组合使用的，以“或”运算（“|”）的方式：例如
+
+
+1
+ofstream out("...", ios::out);  
+ifstream in("...", ios::in);  
+fstream foi("...", ios::in|ios::out);
+void open (const char * filename, ios_base::openmode mode = ios_base::in | ios_base::out,  |ios::binary); 
+
+
+2 ofstream
+ #include <fiostream.h>  
+ int main () {  
+     ofstream out("out.txt");  
+     if (out.is_open())   
+    {  
+         out << "This is a line.\n";  
+         out << "This is another line.\n";  
+         out.close();  
+     }  
+     return 0;  
+ }  
+//结果: 在out.txt中写入：  
+This is a line.  
+This is another line 
+
+3 ifstream
+#include <iostream.h>  
+   #include <fstream.h>  
+   #include <stdlib.h>  
+     
+   int main () {  
+       char buffer[256];  
+       ifstream in("test.txt");  
+       if (! in.is_open())  
+       { cout << "Error opening file"; exit (1); }  
+       while (!in.eof() )  
+       {  
+           in.getline (buffer,100);  
+           cout << buffer << endl;  
+       }  
+       return 0;  
+   }  
+   //结果 在屏幕上输出  
+    This is a line.  
+    This is another line 
+    
+    
+4
+状态标志符的验证(Verification of state flags)
+除了eof()以外，还有一些验证流的状态的成员函数（所有都返回bool型返回值）：
+    bad()
+    如果在读写过程中出错，返回 true 。例如：当我们要对一个不是打开为写状态的文件进行写入时，或者我们要写入的设备没有剩余空间的时候。
+    
+    fail()
+    除了与bad() 同样的情况下会返回 true 以外，加上格式错误时也返回true ，例如当想要读入一个整数，而获得了一个字母的时候。
+    
+    eof()
+    如果读文件到达文件末尾，返回true。
+    
+    good()
+    这是最通用的：如果调用以上任何一个函数返回true 的话，此函数返回 false 。
+
+
+5 
+tellg() 和 tellp()
+
+这两个成员函数不用传入参数，返回pos_type 类型的值(根据ANSI-C++ 标准) ，就是一个整数，代表当前get 流指针的位置 (用tellg) 或 put 流指针的位置(用tellp).
+seekg() 和seekp()
+
+这对函数分别用来改变流指针get 和put的位置。两个函数都被重载为两种不同的原型：
+seekg ( pos_type position );
+seekp ( pos_type position );
+使用这个原型，流指针被改变为指向从文件开始计算的一个绝对位置。要求传入的参数类型与函数 tellg 和tellp 的返回值类型相同。
+seekg ( off_type offset, seekdir direction );
+seekp ( off_type offset, seekdir direction ); //seekdir包括（beg, cur, end）
+    
+seekp(ios::beg); // 位置重置
+seekp(10); // 从0偏移开始前进 10 个字节
+    
+peek() 返回文件中的下一个字符, 但并不实际读取它。所以如果你用peek() 查看下一个字符, 用get() 在peek()之后读取，会得到同一个字符, 然后移动文件计数器。
+
+putback(char) 输入字符, 一次一个, 到流中。我没有见到过它的使用，但这个函数确实存在。
+  
+ignore(int,char); 跳过一定数量的某个字符, 但你必须传给它两个参数。第一个是需要跳过的字符数。第二个是一个字符, 当遇到的时候就会停止。 
+每抛弃一个字符，它都要计数和比较字符：如果计数值达到a或者被抛弃的字符是ch，则cin.ignore()函数执行终止；否则，它继续等待。 例子,
+fin.ignore(100, ‘/n’); //把回车（包括回车）之前的所以字符从输入缓冲（流）中清除出去
+你不给参数,则默认参数为cin.ignore(1,EOF),即把EOF前的1个字符清掉,没有遇到EOF就清掉一个字符然后结束,就是这样啊,所以你每次都少一个字符.
+
+flush函数, 在C++中，可以使用flush函数来清空缓冲区，即使缓冲区中的数据不是满的。
+outfile.flush(); 
+
+使用这个原型可以指定由参数direction决定的一个具体的指针开始计算的一个位移(offset)。它可以是：
+ios::beg 	从流开始位置计算的位移
+ios::cur 	从流指针当前位置开始计算的位移
+ios::end 	从流末尾处开始计算的位移   
+
+//获得一个二进制文件的大小 
+       #include <iostream.h>  
+       #include <fstream.h>  
+         
+       const char * filename = "test.txt";  
+         
+       int main () {  
+           long l,m;  
+           ifstream in(filename, ios::in|ios::binary);  
+           l = in.tellg();  //文件开头
+           in.seekg (0, ios::end);  
+           m = in.tellg();  //文件末尾
+           in.close();  
+           cout << "size of " << filename;  
+           cout << " is " << (m-l) << " bytes.\n";  
+           return 0;  
+       }  
+        
+      //结果:  
+      size of example.txt is 40 bytes.  
+
+    
+6 二进制文件
+在二进制文件中，使用<< 和>>，以及函数（如getline）来操作符输入和输出数据，没有什么实际意义，虽然它们是符合语法的。
+文件流包括两个为顺序读写数据特殊设计的成员函数：write 和 read。第一个函数 (write) 是ostream 的一个成员函数，都是被ofstream所继承。而read 是istream 的一个成员函数，被ifstream 所继承。类 fstream 的对象同时拥有这两个函数。它们的原型是：
+write ( char * buffer, streamsize size );
+read ( char * buffer, streamsize size );
+这里 buffer 是一块内存的地址，用来存储或读出数据。参数size 是一个整数值，表示要从缓存（buffer）中读出或写入的字符数。
+
+    // 读二进制文件 
+        #include <iostream>  
+        #include <fstream.h>  
+          
+        const char * filename = "test.txt";  
+          
+        int main () {  
+            char * buffer;  
+            long size;  
+            ifstream in (filename, ios::in|ios::binary|ios::ate);  //输入流、二进制、文件内容末尾
+            size = in.tellg();  //获取文件byte大小
+            in.seekg (0, ios::beg);  //文件指针移到开头
+            buffer = new char [size];  //开辟数组内存
+            in.read (buffer, size);  //读文件
+            in.close();  //关闭文件
+              
+            cout << "the complete file is in a buffer";  
+              
+            delete[] buffer;  
+            return 0;  
+        }  
+        //运行结果：  
+        The complete file is in a buffer 
+    
+    
+
