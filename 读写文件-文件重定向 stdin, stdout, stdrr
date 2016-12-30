@@ -1,0 +1,51 @@
+读写文件-文件重定向 stdin, stdout, stdrr
+
+	//freopen("input.txt", "r", stdin);
+	//freopen("output.txt", "w", stdout);
+	//freopen("error.txt", "w", stderr);
+	//stdin,stdout,stderr都是FILE*类型的对象，它们都是常量。
+	//分别指向键盘，显示器，显示器。也就是c程序启动时操作系统流环境负责打开的3个文件（标准输入，标准输出和标准错误输出）。
+	//通俗来说，输入重定向让我们可以使用文件代替键盘作为输入，输出重定向可以让我们用文件代替显示器作为输出。
+	//freopen("in.txt","r",'"stdin")的作用就是把stdin重定向到in.txt文件中，
+	//这样在用cin或是用scanf输入时便不会从标准输入流提取数据,而是从in.txt文件中获取输入。
+	//只要把输入事先粘贴到 in.txt，调试时就方便多了。
+	//如果你不想输入或输出到文件了，就加上一句
+	//freopen("CON", "r", stdin); 对应输入
+	//freopen("CON", "w", stdout); 对应输出
+	FILE *fp = freopen("0- sample_input.txt", "r", stdin);
+	//flush(stdin);
+
+	//文件重定向方法文件代替键盘输入
+  int numTest = 0; //测试样例的个数
+	scanf("%d", &numTest); //从文件读入测试样例的个数
+  int	*data = (int *)malloc(numTest * 5 *sizeof(int));
+  for (int k = 0; k < numTest; k++)
+	{
+		//int numV = 0, numE = 0; //顶点和边的个数
+		//scanf("%d%d", &numV, &numE);
+    scanf("%d%d", data[k*5+0], data[k*5+1]);
+		for (int i = 0; i < numE; i++) //循环读取每个边的起点、终点、权重
+		{
+			//int v1 = 0, v2 = 0, w = 0;
+      //以下两者（cin、scanf）一样
+      //cin >> v1 >> v2 >> w;
+			//scanf("%d%d%d", &v1, &v2, &w);
+      cin >> data[k*5+2] >> data[k*5+3] >> data[k*5+4];
+      //scanf("%d%d%d", data[k*5+2], data[k*5+3], data[k*5+4]);
+		}
+	}
+	fclose(stdin);//关闭文件
+  
+	//文件重定向方法文件代替键盘输出
+  freopen("0- sample_output.txt", "w", stdout);
+  printf("%d\n", numTest);
+  for (int k = 0; k < numTest; k++)
+	{
+		//printf("%d %d\n", numV, numE);
+		for (int i = 0; i < numE; i++) //循环读取每个边的起点、终点、权重
+		{
+			cin >> data[k*5+2] >> data[k*5+3] >> data[k*5+4] >> std::endl;
+		  //printf("%d %d %d\n", data[k*5+2], data[k*5+3], data[k*5+4]);
+		}
+	}
+ 	fclose(stdout);//关闭文件 
