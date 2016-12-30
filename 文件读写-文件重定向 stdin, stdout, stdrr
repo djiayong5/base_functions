@@ -1,4 +1,4 @@
-读写文件-文件重定向 stdin, stdout, stdrr
+文件读写-文件重定向 stdin, stdout, stdrr
 
 	//freopen("input.txt", "r", stdin);
 	//freopen("output.txt", "w", stdout);
