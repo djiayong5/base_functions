@@ -77,10 +77,10 @@ This is another line
 
 5 
 tellg() 和 tellp()
-
 这两个成员函数不用传入参数，返回pos_type 类型的值(根据ANSI-C++ 标准) ，就是一个整数，代表当前get 流指针的位置 (用tellg) 或 put 流指针的位置(用tellp).
-seekg() 和seekp()
+std::streampos fsize = in.tellg();//用于输入流，返回流中‘get’指针当前的位置
 
+seekg() 和seekp()
 这对函数分别用来改变流指针get 和put的位置。两个函数都被重载为两种不同的原型：
 seekg ( pos_type position );
 seekp ( pos_type position );
