@@ -1,21 +1,23 @@
 文件读写-文件重定向 stdin, stdout, stdrr
 
-	//freopen("input.txt", "r", stdin);
-	//freopen("output.txt", "w", stdout);
+	/**********************说明开始**************************	
+        stdin,stdout,stderr都是FILE*类型的对象，它们都是常量。
+	分别指向键盘，显示器，显示器。也就是c程序启动时操作系统流环境负责打开的3个文件（标准输入，标准输出和标准错误输出）。
+	通俗来说，输入重定向让我们可以使用文件代替键盘作为输入，输出重定向可以让我们用文件代替显示器作为输出。
+	freopen("in.txt","r",'"stdin")的作用就是把stdin重定向到in.txt文件中，
+	这样在用cin或是用scanf输入时便不会从标准输入流提取数据,而是从in.txt文件中获取输入。
+	只要把输入事先粘贴到 in.txt，调试时就方便多了。
+	**********************说明结束**************************/
+	
+	freopen("input.txt", "r", stdin); //或 FILE *fp = freopen("input.txt", "r", stdin);
+	//freopen("output.txt", "w", stdout); //或 FILE *fp = freopen("output.txt", "r", stdout);
 	//freopen("error.txt", "w", stderr);
-	//stdin,stdout,stderr都是FILE*类型的对象，它们都是常量。
-	//分别指向键盘，显示器，显示器。也就是c程序启动时操作系统流环境负责打开的3个文件（标准输入，标准输出和标准错误输出）。
-	//通俗来说，输入重定向让我们可以使用文件代替键盘作为输入，输出重定向可以让我们用文件代替显示器作为输出。
-	//freopen("in.txt","r",'"stdin")的作用就是把stdin重定向到in.txt文件中，
-	//这样在用cin或是用scanf输入时便不会从标准输入流提取数据,而是从in.txt文件中获取输入。
-	//只要把输入事先粘贴到 in.txt，调试时就方便多了。
-	//如果你不想输入或输出到文件了，就加上一句
-	//freopen("CON", "r", stdin); 对应输入
+	//如果你不想输入或输出到文件了，就加上一句，关闭定向
+        //freopen("CON", "r", stdin); 对应输入
 	//freopen("CON", "w", stdout); 对应输出
-	FILE *fp = freopen("0- sample_input.txt", "r", stdin);
 	//flush(stdin);
 
-	//文件重定向方法文件代替键盘输入
+  //文件重定向方法文件代替键盘输入
   int numTest = 0; //测试样例的个数
 	scanf("%d", &numTest); //从文件读入测试样例的个数
   int	*data = (int *)malloc(numTest * 5 *sizeof(int));
