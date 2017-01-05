@@ -175,5 +175,101 @@ fin.ignore();
         //运行结果：  
         The complete file is in a buffer 
     
-    
-
+  例1： 
+  // << 和 >> 的使用：
+  // 注意： <<写入的数据必须用<<读，而不能用read读！！！！！！
+  std::cout  << "shiyan \n";
+  std::fstream fout_("aaa.dat", std::ios_base::out|std::ios_base::binary);
+  fout_ << num << std::endl;
+  fout_ << dim << std::endl;
+  fout_.ignore();//跳过1字符
+  fout_.seekg( 0, std::ios::beg );//设置输入文件流的文件流指针位置，seekg(需要偏移字节数,搜索的起始位置)
+  fout_.seekg( 20 + sizeof(uchar) * offset, std::ios::beg );//偏移20个字节
+  float *ptrr = new float[256];
+  for (int i = 0; i < 256; i++)
+  {
+    fout_ << i * 0.1f;
+  }
+  fout_.close();
+  std::fstream fin_("aaa.dat", std::ios_base::in|std::ios_base::binary);
+  uint a = 0;
+  uint b = 0;
+  fin_ >> a;
+  fin_ >> b;
+  fin_.ignore();//跳过1字符
+  fin_.seekg( 0, std::ios::beg );//设置输入文件流的文件流指针位置，seekg(需要偏移字节数,搜索的起始位置)
+  fin_.seekg( 20 + sizeof(uchar) * offset, std::ios::beg );//偏移20个字节
+  float temp = 0;
+  float v1 = 0.f;
+  std::cout << a << " ";
+  std::cout << b << " ";
+   for (int i = 0; i < 256; i++)
+   {
+      fin_ >> v1;
+      std::cout << v1 << " ";
+   }
+   std::cout << std::endl;
+   
+   例2：
+   // 注意
+   // read 和 write 的使用单个数据写入和读取：
+   // 注意： write写入的数据必须用read读，而不能用>>！！！！！！
+   std::cout  << "shiyan \n";
+  std::fstream fout_("aaa.dat", std::ios_base::out|std::ios_base::binary);
+  fout_ << num << std::endl;
+  fout_ << dim+2 << std::endl;
+  fout_.ignore();//跳过1字符
+  fout_.seekg( 0, std::ios::beg );//设置输入文件流的文件流指针位置，seekg(需要偏移字节数,搜索的起始位置)
+  fout_.seekg( 20 + sizeof(uchar) * offset, std::ios::beg );//偏移20个字节
+  
+  //数据的单个/次写入
+  for (int i = 0; i < 256; i++)
+  {
+     float tt = i * 0.1f;
+     fout_.write(reinterpret_cast<char *>(&tt), sizeof(float));
+  }
+  
+ //下面的写入方式也可以
+ //数据块的整体一次写入
+ // float *ptrr = new float[256];
+ // for (int i = 0; i < 256; i++)
+ // {
+ //   ptrr[i] = i * 0.1f;
+ // }
+ // fout.write(reinterpret_cast<char *>(ptrr), 256 * sizeof(float));
+  
+  fout_.close();
+  std::fstream fin_("aaa.dat", std::ios_base::in|std::ios_base::binary);
+  uint a = 0;
+  uint b = 0;
+  fin_ >> a;
+  fin_ >> b;
+  fin_.ignore();//跳过1字符
+  fin_.seekg( 0, std::ios::beg );//设置输入文件流的文件流指针位置，seekg(需要偏移字节数,搜索的起始位置)
+  fin_.seekg( 20 + sizeof(uchar) * offset, std::ios::beg );//偏移20个字节
+  float temp = 0;
+  float v1 = 0.f;
+  std::cout << a << " ";
+  std::cout << b << " ";
+ 
+   //数据的单个/次读取
+   for (int i = 0; i < 256; i++)
+   {
+     fin_.read(reinterpret_cast<char *>(&temp), sizeof(float));
+     std::cout << static_cast<float>(temp) << " ";
+   }
+   std::cout << std::endl;
+   
+  //下面的数据块读取也可以
+  //read 整个数据块的一次读取
+  //float *ptrr = new float[256];
+  //fin_.read((char *) ptrr, 256 * sizeof(float));
+  //for (int i = 0; i < 256; i++)
+  //{
+  //  v1 = ptrr[i];
+  //  std::cout << (float)v1 << " ";
+  //}
+  //std::cout << std::endl;
+  
+  
+   
