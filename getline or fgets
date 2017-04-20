@@ -1,0 +1,13 @@
+  #include <fstream>
+  
+  std::ifstream f("test.txt");
+  //std::ifstream f(fpname, std::ios_base::in);
+  std::string s;
+  getline(f, s); //fp必须是ifstream, 遇到行结束符"\0"为止
+  getline(f, s, "#"); //fp必须是ifstream,遇到"#"为止
+  
+  
+  FILE *input = fopen(fpname, "r");
+  static int max_line_len = 1024;
+  char buff[max_line_len];
+  fgets(buff, max_line_len, input); //最所获取max_line_len个字符
