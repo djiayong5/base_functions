@@ -1,0 +1,15 @@
+  #include <sstream>
+  
+  //string to double
+  string ss = "132.15";
+  stringstream ss;
+  ss << s;
+  double t;
+  ss >> t;
+  
+  // double to string
+  double t = 132.15;
+  stringstream ss;
+  ss << t;
+  string s;
+  ss >> s;
