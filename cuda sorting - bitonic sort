@@ -1,0 +1,44 @@
+
+__device__ void swap(int &a, int &b)
+{
+    int t = a;
+    a = b;
+    b = t;
+}
+
+__global__ void bitonic_sort(int *arr)
+{
+    const unsigned int tid = blockIdx.x * blockDim.x + threadIdx.x;
+
+    extern __shared__ int shared_arr[];
+    shared_arr[tid] = arr[tid];
+    __syncthreads();
+
+    //for(int i=2; i<=blociDim.x; i<<=1){
+    for (uint i = 2; i <= Num; i = i*2) //32    (2,4,8,16,32,64,128,...)
+    {
+        for (uint j = i/2; j > 0; j = j/2) //[16,8,4,2,1]
+        {
+            uint tid_comp = tid ^ j; //异或(0 ^ 1 得 1, 1 ^ 1 得 0, 0 ^ 0 得 0, 1 ^ 0 得 1)
+            if (tid_comp > tid)
+            {
+                if ((tid & i) == 0) //ascending
+                {
+                    if (shared_arr[tid] > shared_arr[tid_comp])
+                    {
+                        swap(shared_arr[tid], shared_arr[tid_comp]);
+                    }
+                }
+                else  //desending
+                {
+                    if (shared_arr[tid] < shared_arr[tid_comp])
+                    {
+                        swap(shared_arr[tid], shared_arr[tid_comp]);
+                    }
+                }
+            }
+            __syncthreads();
+        }
+    }
+    arr[tid] = shared_arr[tid];
+}
