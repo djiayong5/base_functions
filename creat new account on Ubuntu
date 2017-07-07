@@ -1,0 +1,12 @@
+creat new account on Ubuntu
+1. all setting --->user accounts--->ulock--->+(administrator,username,passwd)
+2. (ctrl+alt+T)--->su
+   sudo: /etc/sudoers is world writable
+   sudo: no valid sudoers sources found, quitting
+   sudo: unable to initialize policy plugin
+   这个是linux为保证系统安全所做的限制，解决方法运行如下两条命令：
+   pkexec chmod 555 /etc/sudoers
+   pkexec chmod 555 /etc/sudoers.d/README
+   3. su--->passed
+   4. passwd username--->new passwd
+   5. OK!!!
