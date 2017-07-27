@@ -1,0 +1,20 @@
+creat new account on Ubuntu
+简单的创建普通用户和管理员(当然得在root登录下执行)
+1. (ctrl+alt+T)--->su
+   sudo: /etc/sudoers is world writable
+   sudo: no valid sudoers sources found, quitting
+   sudo: unable to initialize policy plugin
+   这个是linux为保证系统安全所做的限制，解决方法运行如下两条命令：
+   pkexec chmod 555 /etc/sudoers
+   pkexec chmod 555 /etc/sudoers.d/README
+   3. su--->passed
+   4.all setting --->user accounts--->ulock--->+(administrator,username,passwd)
+     或者 useradd username
+   4. passwd username--->new passwd
+   5. OK!!!
+
+另外一种方式为 使用useradd命令，运行 useradd --help 看看帮助文件
+useradd -o -u 0 -g 0 -M -d /root -s /bin/bash username(使用root用户一样的家目录) username就有root的权限了
+passwd username
+
+userdel username 删除用户
