@@ -1,0 +1,70 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
+using namespace std;
+typedef vector<int> IntVec;
+typedef typename IntVec::iterator Iter;
+typedef typename IntVec::const_iterator Const_Iter;
+
+//从双闭区间[a, b]随机抽取一个数字
+int randint(int a, int b)
+{
+    if (a > b)
+    {
+        int t = a;
+        a = b;
+        b = t; // swap
+    }
+    int result = a + rand() % (b - a + 1);
+    return result;
+}
+
+//在输入数据数目n未知的情况下(n很大, 例如, 数据流一直没有接收完), 随机抽取m个样本, 使得抽取的每个样本概率都 = 1/n
+bool random_reservoir_sampling(const IntVec &input, IntVec &result, int m)
+{
+    //随机数种子
+    srand(time(NULL));
+    //数据少于抽样数目, 返回false
+    if (input.size() < m)
+        return false;
+
+    //初始化m个样本
+    result.resize(m);
+    Const_Iter iter = input.begin();
+    for (int i = 0; i != m; ++i)
+        result[i] = *iter++;
+
+    //从现有已经接收到数据中随机抽取样本
+    for (int i = m; iter != input.end(); ++i, ++iter)
+    {
+        //现有i个样本, 随机抽一个
+        int j = randint(0, i);
+        //抽到第i个样本的时候, 将当前已有的对应样本替换为第i个样本
+        if (j < m)
+            result[j] = *iter;
+    }
+    return true;
+}
+
+int main()
+{
+    //保证抽取m个样本不重复
+    //大数据的情况下, 主线程在一直接收数据,并往input链表里面push, 附属线程就一直利用random_reservoir_sampling蓄水池抽样方法随机抽样
+    const int n = 10000000; //实际情况下n未知, 知道数据流结束时, 才统计出n的具体值, 这里模拟一个
+    const int m = 100; //抽样数目
+    IntVec input(n), result(m); //初始化
+
+    //初始化模拟数据
+    for (int i = 0; i != n; ++i)
+        input[i] = i;
+
+    //蓄水池抽样
+    if (random_reservoir_sampling(input, result, m))
+        //抽样成功, 则打印
+        for (int i = 0; i != m; ++i)
+            cout << result[i] << " ";
+        cout << endl;
+    
+    return 0;
+}
