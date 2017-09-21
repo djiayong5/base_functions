@@ -2,11 +2,10 @@
 #include<time.h>
 #include<stdlib.h>
 #define RANDOM(minv, maxv) (rand()%(maxv-minv))+ minv
-
 void GetRandomNPoint(int minv, int maxv, int *randomv)
 {
 	int length = maxv - minv;
-  assert(length < RAND_MAX);
+        assert(length < RAND_MAX);
 	SYSTEMTIME st;
 	GetSystemTime(&st);
 	GetLocalTime(&st);
@@ -15,4 +14,38 @@ void GetRandomNPoint(int minv, int maxv, int *randomv)
 	//srand( (unsigned)time( NULL));
 	int index = RANDOM(minv, maxv);
 	*randomv = index;
+}
+
+
+
+或者
+//下面方法1,2,3只能选一个
+//srand(seed)这个只需要用一次即可, 后面没长生一次随机数, 种子会自动更新到不一样的数
+srand(time(0)); //法1:用这个,每批生成的随机数不一样,一般用这个, 每次的初始种子为当前时间(不一样)
+//srand((0));   //法2:用这个,每批生成的随机数都一样, 因为每次的初始种子一样
+for (uint i = 0; i < num; i++)
+{
+    //fprintf(fout, " %f %f", (float)video_id, (float)img_id);
+    for (uint d = 0; d < dim; d++)
+    {
+    	//srand(time(0));  //法3:用这个,每批生成的随机数不一样, 但是每批内的每一个随机数都相等, 原因是批内每个的随机数的种子一样(由于时间粒度太大)
+        cpu_feature[d] = (rand() % 1024) + ((rand() % 1000) / 10000.f);
+        printf("%04.4f ", cpu_feature[d]);
+        //fprintf(fout, "   %f", cpu_feature[d]);
+    }
+    printf("\n");
+}
+
+
+
+//每次将stl标准库的容器vectorIds内元素打乱,且每次打乱的不一致, way1和way2二选一即可
+void myshuffle(std::vector<uint> &vectorIds)
+{
+    //way 1:
+    //unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    //std::shuffle(vectorIds.begin(), vectorIds.end(), std::default_random_engine(seed));
+    //way 2:
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(vectorIds.begin(), vectorIds.end(), g);
 }
