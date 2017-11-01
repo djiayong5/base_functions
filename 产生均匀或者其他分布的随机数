@@ -1,0 +1,131 @@
+产生均匀分布的随机数：
+
+1. 如果我们只想产生0到100的随机数。按照我们之前的做法是直接random()%100。这种做法是不好的。原因可以参见《Accelerated C++》的7.4.4节。
+C++11也知道这一点，这就使得C++11的随机数更加复杂了。
+2. 我们平常说产生随机数，隐含是意思是产生均匀分布的随机数。学过概率论的同学都知道，除了均匀分布还有很多分布，比如正态分布、泊松分布等等。
+之前在网上看过网友怎么用rand()函数产生的随机数制作这些分布。现在这工作不用码农做了，C++11标准都提供了这些分布。
+3. C++11提供的均匀分布模板类为：uniform_int_distribution和uniform_real_distribution。前一个模板类名字中的int不是代表整型，而是表示整数。
+因为它是一个模板类，可以用int、long、short等整数类型来实例化。后一个表示浮点数模板类，可以用float和double来实例化。使用例子如下：
+
+#include<iostream>
+#include<random>
+#include<time.h>
+ 
+using std::cout;
+using std::endl;
+using std::cin;
+ 
+ 
+int main()
+{
+    std::default_random_engine random(time(NULL));
+    std::uniform_int_distribution<int> dis1(0, 100);
+   std::uniform_real_distribution<double> dis2(0.0, 1.0);
+ 
+    for(int i = 0; i < 10; ++i)
+        cout<<dis1(random)<<' ';
+    cout<<endl;
+ 
+    for(int i = 0; i < 10; ++i)
+        cout<<dis2(random)<<' ';
+    cout<<endl;
+ 
+    return 0;
+}
+
+可以看到，在uniform_int_distribution的构造函数中，参数说明了随机数的范围。uniform_int_distribution的随机数的范围不是半开范围[  )，
+而是[  ]，对于uniform_real_distribution却是半开范围[  )。
+也是就是说上面的例子中，能产生100，但不会产生1.0。 不得不说，这颠覆了之前的认识。 对于default_random_engine来说，
+其产生的随机数范围是在[min()， max()]之间，其中min()和max()为它的两个成员函数。同样，也是非半开范围。对于浮点数，
+如果真的是想产生[0.0, 1.0]范围的数，可以使用：
+
+#include<cmath>
+#include<cfloat>
+std::uniform_real_distribution<double> dis2(0, std::nextafter(1,DBL_MAX));
+ 
+如果uniform_int_distribution使用了无参构造函数，那么其随机数的范围是[0,numberic_limits<type>::max()]，
+也就是0到对应实例化类型能表示的最大值。对于uniform_real_distribution的无参构造函数，则是[0, 1)。
+
+概率分布类型：
+        C++11提供的概率分布类型有下面这些：
+
+均匀分布：
+       uniform_int_distribution         整数均匀分布
+       uniform_real_distribution        浮点数均匀分布
+
+伯努利类型分布：（仅有yes/no两种结果，概率一个p，一个1-p）
+       bernoulli_distribution    伯努利分布
+       binomial_distribution     二项分布
+       geometry_distribution    几何分布
+       negative_biomial_distribution  负二项分布
+
+Rate-based distributions: 
+       poisson_distribution 泊松分布
+       exponential_distribution指数分布
+       gamma_distribution 伽马分布
+       weibull_distribution 威布尔分布
+       extreme_value_distribution 极值分布
+
+正态分布相关：
+       normal_distribution        正态分布
+       chi_squared_distribution卡方分布
+       cauchy_distribution       柯西分布
+       fisher_f_distribution      费歇尔F分布
+       student_t_distribution t分布
+
+分段分布相关：
+       discrete_distribution离散分布
+       piecewise_constant_distribution分段常数分布
+       piecewise_linear_distribution分段线性分布
+
+        这些概率分布函数都是有参数的，在类的构造函数中把参数传进去即可。
+        下面是一个泊松分布的例子
+
+#include<iostream>
+#include<random>
+#include<time.h>
+#include<iomanip>
+ 
+intmain()
+{
+  const int nrolls = 10000; // number ofexperiments
+  const int nstars = 100;   // maximum number of stars to distribute
+ 
+  int parameter = 4;
+ 
+  std::minstd_rand engine(time(NULL));
+  std::poisson_distribution<int>distribution(parameter);
+ 
+  int p[20]={};
+ 
+  for (int i=0; i<nrolls; ++i)
+  {
+    int number = distribution(engine);
+    if (number < 20)
+        ++p[number];
+  }
+ 
+  std::cout << "poisson_distribution"<<parameter<< std::endl;
+  for (int i=0; i < 20; ++i)
+    std::cout<<std::setw(2)<< i<< ": " << std::string(p[i]*nstars/nrolls, '*') <<std::endl;
+ 
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
