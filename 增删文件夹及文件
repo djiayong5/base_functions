@@ -1,25 +1,21 @@
 windows头文件：
+#include<io.h>
 #include <dirent.h> 
 linux头文件：
-#include <sys/types.h>  
+#include <unistd.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 
 1. 检查文件是否存在
-
-头文件<io.h>
-使用_access()函数
-如果文件存在，返回0，不存在，返回-1
-#include<direct.h>  
-#include<io.h>     //头文件 
-#include<iostream>  
-using namespace std;  
+使用access()函数
+如果文件存在，返回0，不存在，返回-1 
 int main()  
 {  
    string dirName = "D:\\test";    
-   if(_access(dirName.c_str(), 0)==-1)  
-   {  
-     int i = _mkdir(dirName.c_str());      
-   }   
+   if(access(dirName.c_str(), 0)==-1)  //not exist
+    {
+        int i = mkdir(dirName.c_str(), S_IRWXU);
+    }   
    return 0;  
 }
 
