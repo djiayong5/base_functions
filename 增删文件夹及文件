@@ -1,0 +1,35 @@
+windows头文件：
+#include <dirent.h> 
+linux头文件：
+#include <sys/types.h>  
+#include <sys/stat.h>
+
+1. 检查文件是否存在
+
+头文件<io.h>
+使用_access()函数
+如果文件存在，返回0，不存在，返回-1
+#include<direct.h>  
+#include<io.h>     //头文件 
+#include<iostream>  
+using namespace std;  
+int main()  
+{  
+   string dirName = "D:\\test";    
+   if(_access(dirName.c_str(), 0)==-1)  
+   {  
+     int i = _mkdir(dirName.c_str());      
+   }   
+   return 0;  
+}
+
+新建文件夹：
+    int mkdir(const char *pathname, S_IRWXU|S_IRWXG|S_IRWXO);  
+删除文件夹：
+    int rmdir(const char *_Path);  成功返回0，否则返回-1 
+
+
+新建文件：
+        FILE *logfp2 = fopen(file.txt, "a+");
+删除文件：
+        std::remove(file.txt);
