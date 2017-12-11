@@ -1,0 +1,76 @@
+
+template<typename TT>
+class Base
+{
+public:
+    explicit Base(int val)
+    {
+        v = val;
+    }
+    ~Base() {}
+    virtual void PrintClassName() = 0;
+    //{
+    //    cout << "Base" << " " << v << endl;
+    //}
+    virtual void PrintClassString() = 0;
+    //{
+    //    //nothing to do...
+    //}
+
+public:
+    int v;
+};
+
+template<typename TT>
+class Derived : public::Base<TT>
+{
+public:
+    explicit Derived(int val, string _name): Base<TT>(val) { vv = val; name = _name; }
+    ~Derived() {}
+    virtual void PrintClassName()
+    {
+        cout << "Derived" << " " << this->v << endl;
+        cout << "Derived" << " " << vv << endl;
+    }
+    virtual void PrintClassString()
+    {
+        cout << "String" << " " << name << endl;
+    }
+
+public:
+    int vv;
+    string name;
+
+};
+
+
+template<typename TT>
+void A2B(Base<TT> *a)
+{
+    printf("a->v = %d\n", a->v); //good
+    //printf("a->vv = %d\n", a->vv); //error 找不到vv
+}
+
+int main()
+{
+    if (0)
+    {
+        ////Base<int> *d = new Base<int>(7);
+        //Base<int> *d = new Derived<int>(8);
+        //d->v = 90;
+        //d->PrintClassName();
+
+        //Base<int> *a = new Derived<int>(11, "aaa");
+        //a->PrintClassName();
+        //a->PrintClassString();
+        //A2B<int>(a);
+
+        vector<Base<int> *> layer;//网络各层
+        layer.push_back(new Derived<int>(11, "aaa"));
+        layer[0]->PrintClassName();
+        layer[0]->PrintClassString();
+        A2B<int>(layer[0]);
+    }
+}
+
+子类访问父类的公共变量,可以直接调用, 但如果是模板类,就得在前面加this指示.
